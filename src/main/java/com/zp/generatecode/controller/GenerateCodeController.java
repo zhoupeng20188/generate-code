@@ -4,7 +4,9 @@ import com.google.common.base.CaseFormat;
 import com.zp.generatecode.model.DB;
 import com.zp.generatecode.model.ResBean;
 import com.zp.generatecode.model.Table;
+import com.zp.generatecode.service.GenerateService;
 import com.zp.generatecode.utils.DBUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,9 @@ import java.util.Map;
  */
 @RestController
 public class GenerateCodeController {
+
+    @Autowired
+    GenerateService generateService;
 
     @RequestMapping("/db")
     public ResBean db(@RequestBody DB db) {
@@ -58,5 +63,14 @@ public class GenerateCodeController {
             e.printStackTrace();
         }
         return ResBean.error("配置失败");
+    }
+
+    @RequestMapping("/generate")
+    public ResBean generate(@RequestBody List<Table> list){
+        Boolean generate = generateService.generate(list);
+        if(generate){
+            return ResBean.ok("生成成功");
+        }
+        return ResBean.error("生成失败");
     }
 }

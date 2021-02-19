@@ -14,6 +14,10 @@ public class Column {
      */
     private String ColumnName;
     /**
+     * 注释
+     */
+    private String remark;
+    /**
      * 字段类型
      */
     private String type;
@@ -52,6 +56,14 @@ public class Column {
 
     public void setPrimary(Boolean primary) {
         isPrimary = primary;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     @Override
