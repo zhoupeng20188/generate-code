@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代码生成</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<div id ="app">
+    <table>
+        <tr>
+            <td><el-tag size="mini">用户名</el-tag></td>
+            <td><el-input size="mini" v-model="db.username"></el-input></td>
+        </tr>
+        <tr>
+            <td><el-tag size="mini">密码</el-tag></td>
+            <td><el-input size="mini" v-model="db.password"></el-input></td>
+        </tr>
+        <tr>
+            <td><el-tag size="mini">url</el-tag></td>
+            <td><el-input size="mini" v-model="db.url">
+                <template slot="prepend">jdbc:mysql://</template>
+                <template slot="append">?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=Asia/Shanghai</template>
+            </el-input></td>
+        </tr>
+
+    </table>
+    <div style="display: flex">
+        <el-button type="primary" size="mini" @click="connect" :disabled="!btnEnable">连接</el-button>
+        <div style="color:red;font-weight: bold;">{{msg}}</div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                db: {
+                    username: "root",
+                    password: "root",
+                    url: "localhost:3306/zp_test"
+                },
+                msg: "数据库未连接",
+                btnEnable: true
+            }
+        },
+        methods:{
+            connect(){
+                let _this = this;
+                this.db.url = "jdbc:mysql://" + this.db.url + "?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=Asia/Shanghai";
+                axios.post('/db', this.db)
+                    .then(function (response) {
+                        console.log(response);
+                        _this.msg = response.data.msg;
+                        _this.db = {
+                            username: "root",
+                            password: "root",
+                            url: "localhost:3306/zp_test"
+                        }
+                        _this.btnEnable = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        }
+    })
+</script>
+</body>
+</html>
