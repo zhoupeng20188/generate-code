@@ -14,7 +14,11 @@ public class DBUtil {
     private DB db;
     private static Connection connection;
 
-    public static Connection getConnection(DB db) {
+    public static Connection getConnection() {
+        return connection;
+    }
+
+    public static Connection initDB(DB db) {
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");

@@ -32,9 +32,53 @@
 
     </table>
     <div style="display: flex">
-        <el-button type="primary" size="mini" @click="connect" :disabled="!btnEnable">连接</el-button>
+        <el-button type="primary" size="mini" @click="connect" :disabled="!btnConnectEnable">连接</el-button>
         <div style="color:red;font-weight: bold;">{{msg}}</div>
+        <el-input size="mini" v-model="packageName" style="width: 300px;"></el-input>
+        <el-button type="primary" size="mini" @click="config">配置</el-button>
     </div>
+    <el-table
+            :data="tableData"
+            style="width: 100%">
+        <el-table-column
+                prop="tableName"
+                label="表名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="modelName"
+                label="实体类名"
+                width="180">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.modelName"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column
+                prop="mapperName"
+                label="mapper名"
+                width="180">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.mapperName"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column
+                prop="serviceName"
+                label="service名"
+                width="180">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.serviceName"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column
+                prop="controllerName"
+                label="controller名"
+                width="180">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.controllerName"></el-input>
+            </template>
+        </el-table-column>
+    </el-table>
+    <el-button type="success" size="mini" @click="generate">生成代码</el-button>
 </div>
 
 <script>
@@ -48,7 +92,9 @@
                     url: "localhost:3306/zp_test"
                 },
                 msg: "数据库未连接",
-                btnEnable: true
+                btnConnectEnable: true,
+                packageName: "com.zp.test",
+                tableData: []
             }
         },
         methods:{
@@ -64,7 +110,29 @@
                             password: "root",
                             url: "localhost:3306/zp_test"
                         }
-                        _this.btnEnable = false;
+                        _this.btnConnectEnable = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            config(){
+                let _this = this;
+                axios.post('/config', {packageName: this.packageName})
+                    .then(function (response) {
+                        console.log(response);
+                        _this.msg = response.data.msg;
+                        _this.tableData = response.data.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            generate(){
+                let _this = this;
+                axios.post('/generate', this.tableData)
+                    .then(function (response) {
+                        console.log(response);
                     })
                     .catch(function (error) {
                         console.log(error);
