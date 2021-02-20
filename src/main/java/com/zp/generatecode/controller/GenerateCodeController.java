@@ -2,6 +2,7 @@ package com.zp.generatecode.controller;
 
 import com.google.common.base.CaseFormat;
 import com.zp.generatecode.model.DB;
+import com.zp.generatecode.model.ProjectInfo;
 import com.zp.generatecode.model.ResBean;
 import com.zp.generatecode.model.Table;
 import com.zp.generatecode.service.GenerateService;
@@ -41,6 +42,7 @@ public class GenerateCodeController {
     @RequestMapping("/config")
     public ResBean config(@RequestBody Map<String, String> map) {
         String packageName = map.get("packageName");
+        String projectName = map.get("projectName");
         Connection connection = DBUtil.getConnection();
         try {
             DatabaseMetaData metaData = connection.getMetaData();
@@ -58,6 +60,8 @@ public class GenerateCodeController {
                 table.setControllerName(modelName + "Controller");
                 tables.add(table);
             }
+            ProjectInfo.packageName = packageName;
+            ProjectInfo.projectName = projectName;
             return ResBean.ok("配置成功", tables);
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,9 +1,7 @@
 package com.zp.generatecode.service;
 
 import com.google.common.base.CaseFormat;
-import com.zp.generatecode.model.Application;
-import com.zp.generatecode.model.Column;
-import com.zp.generatecode.model.Table;
+import com.zp.generatecode.model.*;
 import com.zp.generatecode.utils.DBUtil;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -29,6 +27,7 @@ public class GenerateService {
     private String outputDir;
 
     Configuration cfg = null;
+
     {
         cfg = new Configuration(Configuration.VERSION_2_3_30);
         cfg.setTemplateLoader(new ClassTemplateLoader(GenerateService.class, "/templates"));
@@ -44,12 +43,12 @@ public class GenerateService {
                 ResultSet primaryKeys = metaData.getPrimaryKeys(connection.getCatalog(), null, table.getTableName());
                 List<Column> columnList = new ArrayList<>();
                 List<String> pkList = new ArrayList<>();
-                while(primaryKeys.next()){
+                while (primaryKeys.next()) {
                     String pkName = primaryKeys.getString("COLUMN_NAME");
                     pkList.add(pkName);
                 }
                 table.setPrimaryKeys(pkList);
-                while(columns.next()) {
+                while (columns.next()) {
                     String column_name = columns.getString("COLUMN_NAME");
                     String type_name = columns.getString("TYPE_NAME");
                     String remarks = columns.getString("REMARKS");
@@ -60,9 +59,9 @@ public class GenerateService {
                     column.setPropertyName(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, column_name));
 
                     primaryKeys.first();
-                    while(primaryKeys.next()){
+                    while (primaryKeys.next()) {
                         String pkName = primaryKeys.getString("COLUMN_NAME");
-                        if(pkName.equals(column_name)){
+                        if (pkName.equals(column_name)) {
                             column.setPrimary(true);
                         }
                     }
@@ -90,9 +89,19 @@ public class GenerateService {
             // 生成application.properties
             Template applicationTemplate = cfg.getTemplate("application.properties.ftl");
             Application application = new Application();
-            application.setPackageName(list.get(0).getPackageName());
+            String packageName = ProjectInfo.packageName;
+            application.setPackageName(packageName);
             application.setDb(DBUtil.getDB());
             generateCode(application, applicationTemplate, new ApplicationGenerate());
+
+            // 生成application.properties
+            Template pomTemplate = cfg.getTemplate("pom.ftl");
+            Pom pom = new Pom();
+            String[] split = packageName.split("\\.");
+            pom.setGroupId(split[0] + "." + split[1]);
+            pom.setArtifactId(split[split.length-1]);
+            pom.setProjectName(ProjectInfo.projectName);
+            generateCode(pom, pomTemplate, new PomGenerate());
             return true;
         } catch (IOException | SQLException e) {
             e.printStackTrace();

@@ -34,8 +34,14 @@
     <div style="display: flex">
         <el-button type="primary" size="mini" @click="connect" :disabled="!btnConnectEnable">连接</el-button>
         <div style="color:red;font-weight: bold;">{{msg}}</div>
+    </div>
+    <div style="display: flex">
+        <el-tag size="mini">包名</el-tag>
         <el-input size="mini" v-model="packageName" style="width: 300px;"></el-input>
+        <el-tag size="mini">工程名</el-tag>
+        <el-input size="mini" v-model="projectName" style="width: 300px;"></el-input>
         <el-button type="primary" size="mini" @click="config">配置</el-button>
+        <div style="color:red;font-weight: bold;">{{configMsg}}</div>
     </div>
     <el-table
             :data="tableData"
@@ -95,8 +101,10 @@
                 msg: "数据库未连接",
                 btnConnectEnable: true,
                 packageName: "com.zp.test",
+                projectName: "zp-test",
                 tableData: [],
-                generateMsg: "未生成代码"
+                generateMsg: "未生成代码",
+                configMsg: "未配置"
             }
         },
         methods:{
@@ -120,10 +128,10 @@
             },
             config(){
                 let _this = this;
-                axios.post('/config', {packageName: this.packageName})
+                axios.post('/config', {packageName: this.packageName, projectName: this.projectName})
                     .then(function (response) {
                         console.log(response);
-                        _this.msg = response.data.msg;
+                        _this.configMsg = response.data.msg;
                         _this.tableData = response.data.data;
                     })
                     .catch(function (error) {
