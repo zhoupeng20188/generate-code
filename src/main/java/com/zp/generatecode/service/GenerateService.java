@@ -65,10 +65,16 @@ public class GenerateService {
                 }
                 Template modelTemplate = cfg.getTemplate("Model.java.ftl");
                 Template mapperTemplate = cfg.getTemplate("Mapper.java.ftl");
+                Template serviceTemplate = cfg.getTemplate("Service.java.ftl");
+                Template controllerTemplate = cfg.getTemplate("Controller.java.ftl");
                 // 生成model
                 generateCode(table, modelTemplate, new ModelGenerate(table));
                 // 生成mapper
                 generateCode(table, mapperTemplate, new MapperGenerate(table));
+                // 生成service
+                generateCode(table, serviceTemplate, new ServiceGenerate(table));
+                // 生成controller
+                generateCode(table, controllerTemplate, new ControllerGenerate(table));
 
             }
             return true;
