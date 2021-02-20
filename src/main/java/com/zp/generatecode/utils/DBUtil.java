@@ -11,14 +11,17 @@ import java.sql.SQLException;
  * @create 2021/2/19 15:42
  */
 public class DBUtil {
-    private DB db;
+    private static DB db;
     private static Connection connection;
+
+    public static DB getDB() {return db;}
 
     public static Connection getConnection() {
         return connection;
     }
 
     public static Connection initDB(DB db) {
+        DBUtil.db = db;
         if (connection == null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");

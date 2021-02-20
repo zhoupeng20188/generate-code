@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
  * @create 2021/2/20 11:19
  */
 public abstract class AbstractGenerateCode {
-    public void generateCode(Table table, Template modelTemplate, String outputDir) {
+    public void generateCode(Object table, Template modelTemplate, String outputDir) {
         try {
             String dir = outputDir + getSubDir();
             File folder = new File(dir);

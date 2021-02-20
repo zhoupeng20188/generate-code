@@ -1,6 +1,7 @@
 package com.zp.generatecode.service;
 
 import com.google.common.base.CaseFormat;
+import com.zp.generatecode.model.Application;
 import com.zp.generatecode.model.Column;
 import com.zp.generatecode.model.Table;
 import com.zp.generatecode.utils.DBUtil;
@@ -74,6 +75,7 @@ public class GenerateService {
                 Template mapperXmlTemplate = cfg.getTemplate("Mapper.xml.ftl");
                 Template serviceTemplate = cfg.getTemplate("Service.java.ftl");
                 Template controllerTemplate = cfg.getTemplate("Controller.java.ftl");
+
                 // 生成model
                 generateCode(table, modelTemplate, new ModelGenerate(table));
                 // 生成mapper
@@ -84,8 +86,13 @@ public class GenerateService {
                 generateCode(table, serviceTemplate, new ServiceGenerate(table));
                 // 生成controller
                 generateCode(table, controllerTemplate, new ControllerGenerate(table));
-
             }
+            // 生成application.properties
+            Template applicationTemplate = cfg.getTemplate("application.properties.ftl");
+            Application application = new Application();
+            application.setPackageName(list.get(0).getPackageName());
+            application.setDb(DBUtil.getDB());
+            generateCode(application, applicationTemplate, new ApplicationGenerate());
             return true;
         } catch (IOException | SQLException e) {
             e.printStackTrace();
@@ -94,7 +101,7 @@ public class GenerateService {
 
     }
 
-    private void generateCode(Table table, Template modelTemplate, AbstractGenerateCode abstractGenerateCode) {
+    private void generateCode(Object table, Template modelTemplate, AbstractGenerateCode abstractGenerateCode) {
         abstractGenerateCode.generateCode(table, modelTemplate, outputDir);
     }
 }
