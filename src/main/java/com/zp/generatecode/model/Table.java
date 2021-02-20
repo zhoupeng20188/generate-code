@@ -14,6 +14,7 @@ public class Table {
     private String controllerName;
     private String packageName;
     private List<Column> columns;
+    private List<String> primaryKeys;
 
     public String getTableName() {
         return tableName;
@@ -69,6 +70,14 @@ public class Table {
 
     public void setColumns(List<Column> columns) {
         this.columns = columns;
+    }
+
+    public List<String> getPrimaryKeys() {
+        return primaryKeys;
+    }
+
+    public void setPrimaryKeys(List<String> primaryKeys) {
+        this.primaryKeys = primaryKeys;
     }
 
     @Override

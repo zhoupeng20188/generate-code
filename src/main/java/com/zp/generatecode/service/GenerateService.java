@@ -42,6 +42,12 @@ public class GenerateService {
                 ResultSet columns = metaData.getColumns(connection.getCatalog(), null, table.getTableName(), null);
                 ResultSet primaryKeys = metaData.getPrimaryKeys(connection.getCatalog(), null, table.getTableName());
                 List<Column> columnList = new ArrayList<>();
+                List<String> pkList = new ArrayList<>();
+                while(primaryKeys.next()){
+                    String pkName = primaryKeys.getString("COLUMN_NAME");
+                    pkList.add(pkName);
+                }
+                table.setPrimaryKeys(pkList);
                 while(columns.next()) {
                     String column_name = columns.getString("COLUMN_NAME");
                     String type_name = columns.getString("TYPE_NAME");
@@ -65,12 +71,15 @@ public class GenerateService {
                 }
                 Template modelTemplate = cfg.getTemplate("Model.java.ftl");
                 Template mapperTemplate = cfg.getTemplate("Mapper.java.ftl");
+                Template mapperXmlTemplate = cfg.getTemplate("Mapper.xml.ftl");
                 Template serviceTemplate = cfg.getTemplate("Service.java.ftl");
                 Template controllerTemplate = cfg.getTemplate("Controller.java.ftl");
                 // 生成model
                 generateCode(table, modelTemplate, new ModelGenerate(table));
                 // 生成mapper
                 generateCode(table, mapperTemplate, new MapperGenerate(table));
+                // 生成mapper xml
+                generateCode(table, mapperXmlTemplate, new MapperGenerate(table));
                 // 生成service
                 generateCode(table, serviceTemplate, new ServiceGenerate(table));
                 // 生成controller
