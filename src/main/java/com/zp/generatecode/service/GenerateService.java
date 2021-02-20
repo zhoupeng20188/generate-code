@@ -8,6 +8,7 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
@@ -23,6 +24,9 @@ import java.util.List;
 
 @Service
 public class GenerateService {
+    @Value("${output.dir}")
+    private String outputDir;
+
     Configuration cfg = null;
     {
         cfg = new Configuration(Configuration.VERSION_2_3_30);
@@ -32,7 +36,6 @@ public class GenerateService {
 
     public Boolean generate(List<Table> list) {
         try {
-            Template modelTemplate = cfg.getTemplate("Model.java.ftl");
             Connection connection = DBUtil.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
             for (Table table : list) {
@@ -60,7 +63,12 @@ public class GenerateService {
                     columnList.add(column);
                     table.setColumns(columnList);
                 }
-                generateCode(table, modelTemplate);
+                Template modelTemplate = cfg.getTemplate("Model.java.ftl");
+                Template mapperTemplate = cfg.getTemplate("Mapper.java.ftl");
+                // 生成model
+                generateCode(table, modelTemplate, new ModelGenerate(table));
+                // 生成mapper
+                generateCode(table, mapperTemplate, new MapperGenerate(table));
 
             }
             return true;
@@ -71,19 +79,7 @@ public class GenerateService {
 
     }
 
-    private void generateCode(Table table, Template modelTemplate) {
-        String outputDir = "/Users/zhouyao/IdeaProjects/zp_project/generate-code/src/main/java/com/zp/generatecode/output/";
-        try {
-            FileOutputStream fos = new FileOutputStream(outputDir +
-                    table.getModelName() + modelTemplate.getName()
-                    .replace("Model", "").replace(".ftl", ""));
-            OutputStreamWriter out = new OutputStreamWriter(fos);
-            // 渲染模板
-            modelTemplate.process(table, out);
-            fos.close();
-            out.close();
-        } catch (IOException | TemplateException e) {
-            e.printStackTrace();
-        }
+    private void generateCode(Table table, Template modelTemplate, AbstractGenerateCode abstractGenerateCode) {
+        abstractGenerateCode.generateCode(table, modelTemplate, outputDir);
     }
 }

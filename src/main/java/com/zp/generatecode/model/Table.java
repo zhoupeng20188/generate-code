@@ -9,9 +9,9 @@ import java.util.List;
 public class Table {
     private String tableName;
     private String modelName;
-    private String ServiceName;
-    private String MapperName;
-    private String ControllerName;
+    private String serviceName;
+    private String mapperName;
+    private String controllerName;
     private String packageName;
     private List<Column> columns;
 
@@ -32,27 +32,27 @@ public class Table {
     }
 
     public String getServiceName() {
-        return ServiceName;
+        return serviceName;
     }
 
     public void setServiceName(String serviceName) {
-        ServiceName = serviceName;
+        this.serviceName = serviceName;
     }
 
     public String getMapperName() {
-        return MapperName;
+        return mapperName;
     }
 
     public void setMapperName(String mapperName) {
-        MapperName = mapperName;
+        this.mapperName = mapperName;
     }
 
     public String getControllerName() {
-        return ControllerName;
+        return controllerName;
     }
 
     public void setControllerName(String controllerName) {
-        ControllerName = controllerName;
+        this.controllerName = controllerName;
     }
 
     public String getPackageName() {
@@ -76,9 +76,9 @@ public class Table {
         return "Table{" +
                 "tableName='" + tableName + '\'' +
                 ", modelName='" + modelName + '\'' +
-                ", ServiceName='" + ServiceName + '\'' +
-                ", MapperName='" + MapperName + '\'' +
-                ", ControllerName='" + ControllerName + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                ", mapperName='" + mapperName + '\'' +
+                ", controllerName='" + controllerName + '\'' +
                 ", packageName='" + packageName + '\'' +
                 ", columns=" + columns +
                 '}';
